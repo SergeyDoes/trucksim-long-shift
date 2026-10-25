@@ -1,0 +1,58 @@
+# Builds and tests every push and pull request. A tag v<version> (matching the project version in
+# CMakeLists.txt, with a section in CHANGELOG.md) also publishes a GitHub release with the zip.
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write  # publishing releases
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -A x64
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Check that the tag matches the project version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $version = (Get-Content build/version.txt -Raw).Trim()
+          if ("v$version" -ne "${{ github.ref_name }}") {
+            throw "Tag ${{ github.ref_name }} does not match the project version $version in CMakeLists.txt"
+          }
+
+      - name: Package
+        shell: pwsh
+        run: ./scripts/package.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: long-shift
+          path: |
+            dist/*.zip
+            dist/*.zip.sha256
+
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Long Shift ${{ github.ref_name }}
+          body_path: dist/release-notes.md
+          files: |
+            dist/*.zip
+            dist/*.zip.sha256
