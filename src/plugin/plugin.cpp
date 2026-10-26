@@ -72,7 +72,7 @@ struct Plugin {
     CameraSway sway;
     // What the input device reports. It changes at most once per telemetry frame: the game re-polls a
     // device at once while its value keeps changing, and a value recomputed on every call hangs the
-    // main thread (seen in the spike as ~6M polls per second).
+    // main thread (seen in an early in-game test as ~6M polls per second).
     float offset = 0.0f;
     scs_u32_t next_input = 0;  // input to report next in this frame; kInputCount when all are reported
     scs_u32_t input_count = kInputCount;

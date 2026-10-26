@@ -1,6 +1,6 @@
-# Packs a release: long_shift.dll with the README, the changelog and the licenses into
-# dist/long-shift-<version>.zip, plus its SHA-256 checksum and the release notes for this version
-# taken from CHANGELOG.md. Run after building the Release configuration.
+# Packs a release: long_shift.dll and the default long_shift.ini with the README, the changelog and the
+# licenses into dist/long-shift-<version>.zip, plus its SHA-256 checksum and the release notes for this
+# version taken from CHANGELOG.md. Run after building the Release configuration.
 param(
     [string]$BuildDir = "build",
     [string]$Configuration = "Release",
@@ -17,6 +17,7 @@ $staging = Join-Path $out $name
 if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
 New-Item -ItemType Directory -Force $staging | Out-Null
 Copy-Item (Join-Path $root "$BuildDir/src/plugin/$Configuration/long_shift.dll") $staging
+Copy-Item (Join-Path $root "$BuildDir/long_shift.ini") $staging  # written by tools/write_default_ini.cpp
 foreach ($file in "README.md", "CHANGELOG.md", "LICENSE") {
     Copy-Item (Join-Path $root $file) $staging
 }

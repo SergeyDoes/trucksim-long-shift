@@ -9,5 +9,6 @@ First public release.
 - **Head sway:** the cab view sways like a drowsy head along a figure eight that is smeared at random, a little
   even while standing still.
 - Both effects fade in as the mandatory rest approaches and grow with speed; each has its own settings.
-- Everything is tunable in `long_shift.ini`, and changes apply while the game runs.
+- Everything is tunable in `long_shift.ini`, and changes apply while the game runs. The archive comes with
+  the file holding the defaults.
 - Uses only the official SCS SDK (telemetry and input API): no memory hacks, nothing to bind in the controls.
